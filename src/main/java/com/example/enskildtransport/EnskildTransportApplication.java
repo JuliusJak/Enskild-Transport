@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class EnskildTransportApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EnskildTransportApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(EnskildTransportApplication.class, args);
+    }
 }
