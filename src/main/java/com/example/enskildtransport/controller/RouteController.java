@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("routes")
+@RequestMapping("/routes/*")
 public class RouteController {
 
 
@@ -51,7 +51,7 @@ public class RouteController {
     public ResponseEntity<Train> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
         StringBuilder builder = new StringBuilder("https://api.resrobot.se/v2.1/trip?");
         builder.append("originId=").append(originId)
-                .append("&destId=").append(destId)
+                .append("&destId=").append(originId)
                 .append("&accessId=")
                 .append("900be3c6-6024-4578-9c15-1824fb949211");
         ResponseEntity<Train> train = restTemplate.getForEntity(builder.toString(), Train.class);
@@ -59,6 +59,41 @@ public class RouteController {
         System.out.println(train.getBody());
         return ResponseEntity.ok(details);
     }
+
+
+    @GetMapping("traffic/{originId}/{destId}")
+    public ResponseEntity<Train> getGeoCooding(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
+        StringBuilder builder = new StringBuilder("https://api.resrobot.se/v2.1/trip?");
+        builder
+                .append("format=").append("json")
+
+                .append("&originId=").append(originId)
+                .append("&destId=").append(destId)
+                .append("&accessId=").append("900be3c6-6024-4578-9c15-1824fb949211");
+
+        ResponseEntity<Train> traffic = restTemplate
+                .getForEntity(builder.toString(), Train.class);
+
+
+        return ResponseEntity.ok(traffic.getBody());
+    }
+
+
+/*
+    @GetMapping("train/{originId}/{destId}")
+    public ResponseEntity<TrainInfo.TrainResponse> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
+        StringBuilder builder = new StringBuilder("https://api.resrobot.se/v2/trip?");
+        builder.append("originId=").append(originId)
+                .append("&destId=").append(destId)
+                .append("&accessId=")
+                .append("900be3c6-6024-4578-9c15-1824fb949211");
+        ResponseEntity<TrainInfo.TrainResponse> trainResponse = restTemplate.getForEntity(builder.toString(), TrainInfo.TrainResponse.class);
+        TrainInfo.TrainResponse details = trainResponse.getBody();
+        System.out.println(trainResponse.getBody());
+        return ResponseEntity.ok(details);
+    }
+
+ */
 
 
 
