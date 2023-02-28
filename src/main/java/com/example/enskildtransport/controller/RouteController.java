@@ -22,18 +22,43 @@ public class RouteController {
         return ResponseEntity.ok(details);
     }
 
-    @GetMapping("get/weather/{lat}/{lon}")
-    public ResponseEntity<Weather> getWeather(@PathVariable String lat, @PathVariable String lon, RestTemplate restTemplate) {
+
+    @GetMapping("get/weather/{query}")
+    public ResponseEntity<Weather> getWeather(@PathVariable String query, RestTemplate restTemplate) {
+
+        ResponseEntity<GeoCoodingDetails> geoCoodingResponse = getGeoCooding(query, restTemplate);
+        GeoCoodingDetails geoCoodingDetails = geoCoodingResponse.getBody();
+        String lat = geoCoodingDetails.getLat();
+        String lon = geoCoodingDetails.getLon();
+
         StringBuilder builder = new StringBuilder("https://api.openweathermap.org/data/2.5/weather?");
         builder.append("lat=").append(lat)
                 .append("&lon=").append(lon)
                 .append("&appid=")
                 .append("f24f5e9709bc77a5de811683e7de8f19");
+
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
+        System.out.println(weather.getBody());
         return ResponseEntity.ok(details);
     }
 
+    //https://api.openweathermap.org/data/2.5/weather?
+    // lat=59.3251172&lon=18.0710935&appid=f24f5e9709bc77a5de811683e7de8f19
+
+
+    @GetMapping("get/train/{originId}/{destId}")
+    public ResponseEntity<Train> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
+        StringBuilder builder = new StringBuilder("https://api.resrobot.se/v2.1/trip?");
+        builder.append("originId=").append(originId)
+                .append("&destId=").append(destId)
+                .append("&accessId=")
+                .append("900be3c6-6024-4578-9c15-1824fb949211");
+        ResponseEntity<Train> train = restTemplate.getForEntity(builder.toString(), Train.class);
+        Train details = train.getBody();
+        System.out.println(train.getBody());
+        return ResponseEntity.ok(details);
+    }
 
 
 
