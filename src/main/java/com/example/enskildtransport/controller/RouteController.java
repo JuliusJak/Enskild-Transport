@@ -1,22 +1,15 @@
 package com.example.enskildtransport.controller;
 
 import com.example.enskildtransport.model.*;
-import com.example.enskildtransport.repository.FavoritesRepository;
-import com.example.enskildtransport.service.FavoritesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("routes")
 public class RouteController {
 
 
-    @Autowired
-    private FavoritesRepository favoritesRepository;
 
     @GetMapping("weather/{query}")
     public ResponseEntity<GeoCoodingDetails> getGeoCooding(@PathVariable String query, RestTemplate restTemplate) {
@@ -58,7 +51,7 @@ public class RouteController {
 
 
 
-
+/*
 
 
 
@@ -91,4 +84,6 @@ public class RouteController {
 
         return favorites;
     }
+
+ */
 }
