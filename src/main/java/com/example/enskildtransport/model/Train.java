@@ -16,6 +16,9 @@ public class Train {
         @JsonAlias("Origin")
         private OriginDetails origin;
 
+        @JsonAlias("Destination")
+        private DestinationDetails destination;
+
         @JsonAlias("ServiceDays")
         private ServiceDaysDetails[] serviceDays;
 
@@ -33,6 +36,19 @@ public class Train {
             private String date;
         }
 
+        @Data
+        public static class DestinationDetails {
+            private String name;
+            private String type;
+            private String id;
+            private String extId;
+            private double lon;
+            private double lat;
+            private int routeIdx;
+            private String prognosisType;
+            private String time;
+            private String date;
+        }
         @Data
         public static class ServiceDaysDetails {
             private String planningPeriodBegin;
