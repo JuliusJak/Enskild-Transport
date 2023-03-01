@@ -1,9 +1,11 @@
 package com.example.enskildtransport.controller;
 
 import com.example.enskildtransport.model.*;
+import com.example.enskildtransport.repository.RouteRepository;
 import com.example.enskildtransport.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -61,6 +63,8 @@ public class RouteController {
     }
 
 
+
+
     @GetMapping("get/weather/{query}")
     public ResponseEntity<Weather> getWeather(@PathVariable String query, RestTemplate restTemplate) {
 
@@ -77,6 +81,7 @@ public class RouteController {
 
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
+        System.out.println(weather.getBody());
         return ResponseEntity.ok(details);
     }
 
@@ -102,6 +107,7 @@ public class RouteController {
                 .append("900be3c6-6024-4578-9c15-1824fb949211");
         ResponseEntity<Train> train = restTemplate.getForEntity(builder.toString(), Train.class);
         Train details = train.getBody();
+        System.out.println(train.getBody());
         return ResponseEntity.ok(details);
     }
 
@@ -155,6 +161,8 @@ public class RouteController {
 
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
+        System.out.println(details);
+
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
@@ -227,5 +235,4 @@ public class RouteController {
     }
 
  */
-
 
