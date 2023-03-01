@@ -113,10 +113,18 @@ public class RouteController {
 
 
     @PostMapping
-    public ResponseEntity<List<Route>> createRoute(@RequestBody Route route){
+    public ResponseEntity<List<Route>> createRoute(@RequestBody Route route) {
+        boolean isStartLocationStation = route.startLocationIsStation(route.getStartLocation());
+        route.setStartLocationIsStation(isStartLocationStation);
+
+        boolean isEndLocationIsStation = route.endLocationIsStation(route.getEndLocation());
+        route.setEndLocationIsStation(isEndLocationIsStation);
+        System.out.println(route);
         routeService.save(route);
         return ResponseEntity.status(201).body(routeList);
     }
+
+
 
     @GetMapping("/Start/{startLocation}")
     public List<Route> getRouteByStartLocation(@PathVariable String startLocation){
@@ -139,13 +147,21 @@ public class RouteController {
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
-        if (transportType.equalsIgnoreCase("car")) {
+        List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
-            List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+        String route = routes.toArray()[0].toString();
+        String startIsStation = "startLocationIsStation=true";
+        String endIsStation = "endLocationIsStation=true";
 
-            return ResponseEntity.ok(limitedRoutes);
+        if (route.contains(endIsStation)) {
+            System.out.println(endIsStation);
         }
-        return ResponseEntity.ok(routes);
+        if (route.contains(startIsStation)) {
+            System.out.println(startIsStation);
+        }
+
+
+        return ResponseEntity.ok(limitedRoutes);
     }
 
     @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}/{limit}")
@@ -174,16 +190,13 @@ public class RouteController {
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
-        if (transportType.equalsIgnoreCase("car")) {
-
-
-            List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
-            RouteDetails routeDetails = new RouteDetails(details, limitedRoutes);
-
-            return ResponseEntity.ok(routeDetails);
+        if (routes.isEmpty() || limit <= 0) {
+            details = null;
         }
 
-        RouteDetails routeDetails = new RouteDetails(details, routes);
+        List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+        RouteDetails routeDetails = new RouteDetails(details, limitedRoutes);
+
         return ResponseEntity.ok(routeDetails);
     }
 
