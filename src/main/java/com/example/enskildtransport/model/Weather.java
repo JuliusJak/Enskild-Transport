@@ -4,19 +4,21 @@ import lombok.Data;
 
 @Data
 public class Weather {
-    private Coord coord;
-    private WeatherInfo[] weather;
-    private String base;
-    private Main main;
-    private int visibility;
-    private Wind wind;
-    private Clouds clouds;
-    private long dt;
-    private Sys sys;
-    private int timezone;
-    private int id;
     private String name;
-    private int cod;
+    //private Coord coord;
+    private WeatherInfo[] weather;
+    //private String base;
+    private Main main;
+    //private int visibility;
+    //private Wind wind;
+    //private Clouds clouds;
+    //private long dt;
+    //private Sys sys;
+    //private int timezone;
+    //private int id;
+
+    //private int cod;
+
 
     @Data
     public static class Coord {
@@ -24,12 +26,13 @@ public class Weather {
         private double lat;
     }
 
+
     @Data
     public static class WeatherInfo {
-        private int id;
+        //private int id;
         private String main;
         private String description;
-        private String icon;
+        //private String icon;
     }
 
     @Data

@@ -1,11 +1,9 @@
 package com.example.enskildtransport.controller;
 
 import com.example.enskildtransport.model.*;
-import com.example.enskildtransport.repository.RouteRepository;
 import com.example.enskildtransport.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -63,8 +61,6 @@ public class RouteController {
     }
 
 
-
-
     @GetMapping("get/weather/{query}")
     public ResponseEntity<Weather> getWeather(@PathVariable String query, RestTemplate restTemplate) {
 
@@ -81,7 +77,6 @@ public class RouteController {
 
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
-        System.out.println(weather.getBody());
         return ResponseEntity.ok(details);
     }
 
@@ -107,7 +102,6 @@ public class RouteController {
                 .append("900be3c6-6024-4578-9c15-1824fb949211");
         ResponseEntity<Train> train = restTemplate.getForEntity(builder.toString(), Train.class);
         Train details = train.getBody();
-        System.out.println(train.getBody());
         return ResponseEntity.ok(details);
     }
 
@@ -134,14 +128,38 @@ public class RouteController {
     public ResponseEntity<List<Route>> getRouteByStartAndEndLocation(
             @PathVariable String startLocation,
             @PathVariable String endLocation,
-            @PathVariable String transportType,
-            RestTemplate restTemplate){
-
-
+            @PathVariable String transportType){
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
         return ResponseEntity.ok(routes);
+    }
+
+    @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}")
+    public ResponseEntity<RouteDetails> getRouteByStartAndEndLocation(
+            @PathVariable String startLocation,
+            @PathVariable String endLocation,
+            @PathVariable String transportType,
+            RestTemplate restTemplate){
+
+        ResponseEntity<GeoCoodingDetails> geoCoodingResponse = getGeoCooding(endLocation, restTemplate);
+        GeoCoodingDetails geoCoodingDetails = geoCoodingResponse.getBody();
+        String lat = geoCoodingDetails.getLat();
+        String lon = geoCoodingDetails.getLon();
+
+        StringBuilder builder = new StringBuilder("https://api.openweathermap.org/data/2.5/weather?");
+        builder.append("lat=").append(lat)
+                .append("&lon=").append(lon)
+                .append("&appid=")
+                .append("f24f5e9709bc77a5de811683e7de8f19");
+
+        ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
+        Weather details = weather.getBody();
+
+        List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
+
+        RouteDetails routeDetails = new RouteDetails(details, routes);
+        return ResponseEntity.ok(routeDetails);
     }
 
     @GetMapping("/{transportType}")
@@ -209,39 +227,5 @@ public class RouteController {
     }
 
  */
-/*
 
-
-
-
-
-    @GetMapping("/Car")
-    public Car selectCar(@RequestBody Car car) {
-
-        return null;
-    }
-
-    @GetMapping("/Walk")
-    public Walk selectCar(@RequestBody Walk walk) {
-
-        return null;
-
-    }
-
-    @PostMapping("/add/favorites")
-    public Favorites saveAsFavorite(@PathVariable Long id, @RequestBody Favorites favorites) {
-        //id = ??
-        favorites.setFavoriteId(id);
-        return favoritesRepository.saveFavorite(favorites);
-    }
-
-    @PostMapping("/all/favorites")
-    public List<Favorites> getAllFavorites() {
-
-        List<Favorites> favorites = favoritesRepository.getAllFavorites();
-
-        return favorites;
-    }
-
- */
 

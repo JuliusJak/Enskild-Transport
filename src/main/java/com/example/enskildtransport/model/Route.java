@@ -19,12 +19,9 @@ public class Route {
     private long id;
     private String startLocation;
     private String endLocation;
-    private String departure;
-    private String arrival;
     private int travelTime;
-    private int changes;
-    private boolean isFavorite;
     private String transportType;
+    private boolean isFavorite;
 
 
 
