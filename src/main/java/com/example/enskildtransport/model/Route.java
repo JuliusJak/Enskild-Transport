@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
 
-import java.util.List;
 import java.util.Random;
 
 @AllArgsConstructor
@@ -32,7 +31,6 @@ public class Route {
     public int setTravelTime() {
         Random rand = new Random();
         this.travelTime = rand.nextInt(24*60) + 1;
-        System.out.println(travelTime);
         if (travelTime < rand.nextInt(24*60) + 1) {
             delay = true;
         }
@@ -47,11 +45,9 @@ public class Route {
         if (StationNames.stationsSweden.contains(startLocation)) {
             startLocationIsStation = true;
 
-            System.out.println("true(start)");
             return startLocationIsStation;
         } else {
 
-            System.out.println("false(start)");
             return false;
         }
 
@@ -63,11 +59,9 @@ public class Route {
         if (StationNames.stationsSweden.contains(endLocation)) {
             endLocationIsStation = true;
 
-            System.out.println("true(end)");
             return endLocationIsStation;
         } else {
 
-            System.out.println("false(end)");
             return false;
         }
 

@@ -119,7 +119,6 @@ public class RouteController {
 
         boolean isEndLocationIsStation = route.endLocationIsStation(route.getEndLocation());
         route.setEndLocationIsStation(isEndLocationIsStation);
-        System.out.println(route);
         routeService.save(route);
         return ResponseEntity.status(201).body(routeList);
     }
@@ -153,11 +152,10 @@ public class RouteController {
         String startIsStation = "startLocationIsStation=true";
         String endIsStation = "endLocationIsStation=true";
 
-        if (route.contains(endIsStation)) {
+        if (route.contains(endIsStation) || route.contains(startIsStation)) {
             System.out.println(endIsStation);
-        }
-        if (route.contains(startIsStation)) {
             System.out.println(startIsStation);
+
         }
 
 
@@ -189,6 +187,16 @@ public class RouteController {
 
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
+
+        String route = routes.toArray()[0].toString();
+        String startIsStation = "startLocationIsStation=true";
+        String endIsStation = "endLocationIsStation=true";
+
+        if (route.contains(endIsStation) || route.contains(startIsStation)) {
+            System.out.println(endIsStation);
+            System.out.println(startIsStation);
+        }
+
 
         if (routes.isEmpty() || limit <= 0) {
             details = null;
@@ -244,8 +252,6 @@ public class RouteController {
         Route updatedRoute= routeService.save(existingRoute);
         return  ResponseEntity.ok(updatedRoute);
     }
-
-
 
 
 
