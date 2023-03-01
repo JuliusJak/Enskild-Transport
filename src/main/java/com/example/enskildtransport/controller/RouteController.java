@@ -1,6 +1,9 @@
 package com.example.enskildtransport.controller;
 
 import com.example.enskildtransport.model.*;
+import com.example.enskildtransport.repository.RouteRepository;
+import com.example.enskildtransport.service.RouteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
@@ -8,12 +11,16 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/routes/*")
 public class RouteController {
 
+    @Autowired
+    private RouteService routeService;
 
+    private List<Route> routeList;
 
     @GetMapping("weather/{query}")
     public ResponseEntity<GeoCoodingDetails> getGeoCooding(@PathVariable String query, RestTemplate restTemplate) {
@@ -105,6 +112,88 @@ public class RouteController {
     }
 
 
+    @PostMapping
+    public ResponseEntity<List<Route>> createRoute(@RequestBody Route route){
+        routeService.save(route);
+        return ResponseEntity.status(201).body(routeList);
+    }
+
+    @GetMapping("/Start/{startLocation}")
+    public List<Route> getRouteByStartLocation(@PathVariable String startLocation){
+        List<Route> routes = routeService.findByStartLocation(startLocation);
+        return routes;
+    }
+
+    @GetMapping("/End/{endLocation}")
+    public List<Route> getRouteByEndLocation(@PathVariable String endLocation){
+        List<Route> routes = routeService.findByEndLocation(endLocation);
+        return routes;
+    }
+
+    @GetMapping("/{startLocation}/to/{endLocation}/{transportType}")
+    public ResponseEntity<List<Route>> getRouteByStartAndEndLocation(
+            @PathVariable String startLocation,
+            @PathVariable String endLocation,
+            @PathVariable String transportType,
+            RestTemplate restTemplate){
+
+
+
+        List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
+
+        return ResponseEntity.ok(routes);
+    }
+
+    @GetMapping("/{transportType}")
+    public ResponseEntity<List<Route>> getRouteByTransportType(@PathVariable String transportType) {
+        List<Route> routes = routeService.findByTransportType(transportType);
+        return ResponseEntity.ok(routes);
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<List<Route>> getFavoriteRoutes(){
+        List<Route> favoriteRoutes = routeService.findByIsFavorite();
+        return ResponseEntity.ok(favoriteRoutes);
+    }
+
+    @GetMapping("/favorites/{transportType}")
+    public ResponseEntity<List<Route>> getFavoriteRoutesByTransportType(@PathVariable String transportType){
+        List<Route> favoriteRoutes = routeService.findByIsFavoriteAndTransportType(true, transportType);
+        return ResponseEntity.ok(favoriteRoutes);
+    }
+
+    @PutMapping("/{id}/favorite")
+
+    public ResponseEntity<Route> markAsFavorite (@PathVariable Long id){
+        Optional<Route> route = routeService.findById(id);
+        if(route.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        Route existingRoute = route.get();
+        existingRoute.setFavorite(true);
+
+        Route updatedRoute = routeService.save(existingRoute);
+        return ResponseEntity.ok(updatedRoute);
+    }
+    @PutMapping("/{id}/unmark-favorite")
+
+    public ResponseEntity<Route> unmarkAsFavorite (@PathVariable Long id){
+        Optional<Route> route = routeService.findById(id);
+        if(route.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Route existingRoute = route.get();
+        existingRoute.setFavorite(false);
+
+        Route updatedRoute= routeService.save(existingRoute);
+        return  ResponseEntity.ok(updatedRoute);
+    }
+
+
+
+
+
+}
 /*
     @GetMapping("train/{originId}/{destId}")
     public ResponseEntity<TrainInfo.TrainResponse> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
@@ -120,23 +209,6 @@ public class RouteController {
     }
 
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 
 
@@ -172,4 +244,4 @@ public class RouteController {
     }
 
  */
-}
+
