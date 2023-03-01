@@ -24,7 +24,8 @@ public class Route {
     private int travelTime = setTravelTime();
     private String transportType;
     private boolean isFavorite;
-    private boolean isStation;
+    private boolean startLocationIsStation;
+    private boolean endLocationIsStation;
 
     public int setTravelTime() {
         Random rand = new Random();

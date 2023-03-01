@@ -130,22 +130,30 @@ public class RouteController {
         return routes;
     }
 
-    @GetMapping("/{startLocation}/to/{endLocation}/{transportType}")
+    @GetMapping("/{startLocation}/to/{endLocation}/{transportType}/{limit}")
     public ResponseEntity<List<Route>> getRouteByStartAndEndLocation(
             @PathVariable String startLocation,
             @PathVariable String endLocation,
-            @PathVariable String transportType){
+            @PathVariable String transportType,
+            @PathVariable int limit){
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
+        if (transportType.equalsIgnoreCase("car")) {
+
+            List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+
+            return ResponseEntity.ok(limitedRoutes);
+        }
         return ResponseEntity.ok(routes);
     }
 
-    @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}")
+    @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}/{limit}")
     public ResponseEntity<RouteDetails> getRouteByStartAndEndLocation(
             @PathVariable String startLocation,
             @PathVariable String endLocation,
             @PathVariable String transportType,
+            @PathVariable int limit,
             RestTemplate restTemplate){
 
         ResponseEntity<GeoCoodingDetails> geoCoodingResponse = getGeoCooding(endLocation, restTemplate);
@@ -161,10 +169,19 @@ public class RouteController {
 
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
-        System.out.println(details);
+
 
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
+
+        if (transportType.equalsIgnoreCase("car")) {
+
+
+            List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+            RouteDetails routeDetails = new RouteDetails(details, limitedRoutes);
+
+            return ResponseEntity.ok(routeDetails);
+        }
 
         RouteDetails routeDetails = new RouteDetails(details, routes);
         return ResponseEntity.ok(routeDetails);
