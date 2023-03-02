@@ -165,7 +165,7 @@ public class RouteController {
     }
 
     @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}/{limit}")
-    public ResponseEntity<RouteDetails> getRouteByStartAndEndLocation(
+    public ResponseEntity<RouteFusion> getRouteAndWeatherByStartAndEndLocation(
             @PathVariable String startLocation,
             @PathVariable String endLocation,
             @PathVariable String transportType,
@@ -193,11 +193,15 @@ public class RouteController {
         String route = routes.toArray()[0].toString();
         String startIsStation = "startLocationIsStation=true";
         String endIsStation = "endLocationIsStation=true";
+        getPublicRoutes(restTemplate, startLocation, endLocation);
 
         if (route.contains(endIsStation) || route.contains(startIsStation)) {
             System.out.println(endIsStation);
             System.out.println(startIsStation);
 
+
+            RouteFusion routeFusion = new RouteFusion(details, routes, getPublicRoutes(restTemplate, startLocation, endLocation));
+            return ResponseEntity.ok(routeFusion);
         }
 
 
@@ -206,7 +210,7 @@ public class RouteController {
         }
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
-        RouteDetails routeDetails = new RouteDetails(details, limitedRoutes);
+        RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, null);
 
         return ResponseEntity.ok(routeDetails);
     }
