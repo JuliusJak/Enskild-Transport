@@ -26,6 +26,8 @@ public interface StationNames {
             "Falun",
             "Visby",
             "Boden",
-            "Kiruna"
+            "Kiruna",
+            "Skogsholm",
+            "Liseberg"
     );
 }

@@ -4,6 +4,8 @@ import com.example.enskildtransport.model.*;
 import com.example.enskildtransport.repository.RouteRepository;
 import com.example.enskildtransport.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
@@ -195,6 +197,7 @@ public class RouteController {
         if (route.contains(endIsStation) || route.contains(startIsStation)) {
             System.out.println(endIsStation);
             System.out.println(startIsStation);
+
         }
 
 
@@ -254,6 +257,24 @@ public class RouteController {
     }
 
 
+    @GetMapping("/public/{startLocation}/to/{endLocation}")
+    public List<PublicRoute> getPublicRoutes(RestTemplate restTemplate,
+                                       @PathVariable String startLocation,
+                                       @PathVariable String endLocation){
+
+        StringBuilder builder = new StringBuilder("https://transportfinal-transport-service.azuremicroservices.io");
+        builder.append("/routes/").append(startLocation)
+                .append("/to/").append(endLocation);
+
+
+        ResponseEntity<List<PublicRoute>> response = restTemplate.exchange(
+                builder.toString(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                });
+        return response.getBody();
+    }
 
 
 
