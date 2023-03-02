@@ -140,11 +140,12 @@ public class RouteController {
     }
 
     @GetMapping("/{startLocation}/to/{endLocation}/{transportType}/{limit}")
-    public ResponseEntity<List<Route>> getRouteByStartAndEndLocation(
+    public ResponseEntity<RouteAndPublicRoute> getRouteByStartAndEndLocation(
             @PathVariable String startLocation,
             @PathVariable String endLocation,
             @PathVariable String transportType,
-            @PathVariable int limit){
+            @PathVariable int limit,
+            RestTemplate restTemplate){
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
@@ -158,10 +159,13 @@ public class RouteController {
             System.out.println(endIsStation);
             System.out.println(startIsStation);
 
+            RouteAndPublicRoute routeFusion = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
+            return ResponseEntity.ok(routeFusion);
         }
 
 
-        return ResponseEntity.ok(limitedRoutes);
+        RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
+        return ResponseEntity.ok(routeDetails);
     }
 
     @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}/{limit}")
@@ -193,24 +197,21 @@ public class RouteController {
         String route = routes.toArray()[0].toString();
         String startIsStation = "startLocationIsStation=true";
         String endIsStation = "endLocationIsStation=true";
-        getPublicRoutes(restTemplate, startLocation, endLocation);
 
         if (route.contains(endIsStation) || route.contains(startIsStation)) {
             System.out.println(endIsStation);
             System.out.println(startIsStation);
 
 
-            RouteFusion routeFusion = new RouteFusion(details, routes, getPublicRoutes(restTemplate, startLocation, endLocation));
+            RouteFusion routeFusion = new RouteFusion(details, routes, getPublicRoutes(restTemplate, null, null));
             return ResponseEntity.ok(routeFusion);
         }
-
-
         if (routes.isEmpty() || limit <= 0) {
             details = null;
         }
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
-        RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, null);
+        RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
 
         return ResponseEntity.ok(routeDetails);
     }
