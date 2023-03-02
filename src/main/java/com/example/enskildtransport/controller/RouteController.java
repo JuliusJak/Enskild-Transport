@@ -203,7 +203,7 @@ public class RouteController {
             System.out.println(startIsStation);
 
 
-            RouteFusion routeFusion = new RouteFusion(details, routes, getPublicRoutes(restTemplate, null, null));
+            RouteFusion routeFusion = new RouteFusion(details, routes, getPublicRoutes(restTemplate, startLocation, endLocation));
             return ResponseEntity.ok(routeFusion);
         }
         if (routes.isEmpty() || limit <= 0) {
@@ -211,7 +211,7 @@ public class RouteController {
         }
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
-        RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
+        RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, getPublicRoutes(restTemplate, null, null));
 
         return ResponseEntity.ok(routeDetails);
     }
