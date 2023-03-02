@@ -1,4 +1,4 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.weatherModel;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.routesModel;
 
+import com.example.enskildtransport.model.StationNames;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -15,6 +16,7 @@ import java.util.Random;
 @Entity
 public class Route {
 
+    //Choose what parameters show when calling a route
 
     @Id
     @GeneratedValue

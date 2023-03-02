@@ -1,6 +1,6 @@
 package com.example.enskildtransport.repository;
 
-import com.example.enskildtransport.model.Route;
+import com.example.enskildtransport.model.routesModel.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

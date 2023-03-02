@@ -1,13 +1,11 @@
 package com.example.enskildtransport.service;
 
-import com.example.enskildtransport.model.Route;
+import com.example.enskildtransport.model.routesModel.Route;
 import com.example.enskildtransport.repository.RouteRepository;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.tool.schema.spi.ExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +16,6 @@ public class RouteService {
     RouteRepository routeRepository;
 
     private List<Route> routeList;
-
-    /*public RouteService (RouteRepository routeRepository){
-        this.routeRepository = routeRepository;
-    }*/
 
     public List<Route> getAll() {
         log.debug("All courses is being fetched");
@@ -67,14 +61,4 @@ public class RouteService {
         return routeRepository.findByIsFavoriteAndTransportType(b,transportType);
     }
 
-
-/*
-    public Route updateDelay(Long id, int delay) {
-        Route route = routeRepository.findById(id).orElseThrow(() -> new ExceptionHandler(id));
-
-        route.setDelay(delay);
-        return routeRepository.save(route);
-    }
-
- */
 }

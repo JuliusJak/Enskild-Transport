@@ -1,9 +1,13 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.weatherModel;
 
 import lombok.Data;
 
 @Data
 public class Weather {
+
+    //Choose what parameters show when calling on it
+
+
     private String name;
     //private Coord coord;
     private WeatherInfo[] weather;

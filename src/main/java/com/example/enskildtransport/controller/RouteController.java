@@ -1,17 +1,20 @@
 package com.example.enskildtransport.controller;
 
-import com.example.enskildtransport.model.*;
-import com.example.enskildtransport.repository.RouteRepository;
+import com.example.enskildtransport.model.PublicModel.PublicRoute;
+import com.example.enskildtransport.model.routesModel.Route;
+import com.example.enskildtransport.model.routesModel.RouteAndPublicRoute;
+import com.example.enskildtransport.model.routesModel.RouteFusion;
+import com.example.enskildtransport.model.trainModel.Train;
+import com.example.enskildtransport.model.weatherModel.GeoCoodingDetails;
+import com.example.enskildtransport.model.weatherModel.Weather;
 import com.example.enskildtransport.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +40,6 @@ public class RouteController {
         return ResponseEntity.status(201).body(routeList);
     }
 
-
     @GetMapping("/Start/{startLocation}")
     public List<Route> getRouteByStartLocation(@PathVariable String startLocation){
         List<Route> routes = routeService.findByStartLocation(startLocation);
@@ -50,6 +52,12 @@ public class RouteController {
         return routes;
     }
 
+    @GetMapping("/{transportType}")
+    public ResponseEntity<List<Route>> getRouteByTransportType(@PathVariable String transportType) {
+        List<Route> routes = routeService.findByTransportType(transportType);
+        return ResponseEntity.ok(routes);
+    }
+
     @GetMapping("/{startLocation}/to/{endLocation}/{transportType}/{limit}")
     public ResponseEntity<RouteAndPublicRoute> getRouteByStartAndEndLocation(
             @PathVariable String startLocation,
@@ -60,6 +68,10 @@ public class RouteController {
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
+        if (routes.isEmpty()){
+            System.out.println("Route is empty");
+
+        }
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
         String route = routes.toArray()[0].toString();
@@ -67,13 +79,10 @@ public class RouteController {
         String endIsStation = "endLocationIsStation=true";
 
         if (route.contains(endIsStation) || route.contains(startIsStation)) {
-            System.out.println(endIsStation);
-            System.out.println(startIsStation);
 
             RouteAndPublicRoute routeFusion = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
             return ResponseEntity.ok(routeFusion);
         }
-
 
         RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
         return ResponseEntity.ok(routeDetails);
@@ -101,8 +110,6 @@ public class RouteController {
         ResponseEntity<Weather> weather = restTemplate.getForEntity(builder.toString(), Weather.class);
         Weather details = weather.getBody();
 
-
-
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
         String route = routes.toArray()[0].toString();
@@ -124,56 +131,10 @@ public class RouteController {
         return ResponseEntity.ok(routeDetails);
     }
 
-    @GetMapping("/{transportType}")
-    public ResponseEntity<List<Route>> getRouteByTransportType(@PathVariable String transportType) {
-        List<Route> routes = routeService.findByTransportType(transportType);
-        return ResponseEntity.ok(routes);
-    }
-
-    @GetMapping("/favorites")
-    public ResponseEntity<List<Route>> getFavoriteRoutes(){
-        List<Route> favoriteRoutes = routeService.findByIsFavorite();
-        return ResponseEntity.ok(favoriteRoutes);
-    }
-
-    @GetMapping("/favorites/{transportType}")
-    public ResponseEntity<List<Route>> getFavoriteRoutesByTransportType(@PathVariable String transportType){
-        List<Route> favoriteRoutes = routeService.findByIsFavoriteAndTransportType(true, transportType);
-        return ResponseEntity.ok(favoriteRoutes);
-    }
-
-    @PutMapping("/{id}/favorite")
-
-    public ResponseEntity<Route> markAsFavorite (@PathVariable Long id){
-        Optional<Route> route = routeService.findById(id);
-        if(route.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        Route existingRoute = route.get();
-        existingRoute.setFavorite(true);
-
-        Route updatedRoute = routeService.save(existingRoute);
-        return ResponseEntity.ok(updatedRoute);
-    }
-    @PutMapping("/{id}/unmark-favorite")
-
-    public ResponseEntity<Route> unmarkAsFavorite (@PathVariable Long id){
-        Optional<Route> route = routeService.findById(id);
-        if(route.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Route existingRoute = route.get();
-        existingRoute.setFavorite(false);
-
-        Route updatedRoute= routeService.save(existingRoute);
-        return  ResponseEntity.ok(updatedRoute);
-    }
-
-
     @GetMapping("/public/{startLocation}/to/{endLocation}")
     public List<PublicRoute> getPublicRoutes(RestTemplate restTemplate,
-                                       @PathVariable String startLocation,
-                                       @PathVariable String endLocation){
+                                             @PathVariable String startLocation,
+                                             @PathVariable String endLocation){
 
         StringBuilder builder = new StringBuilder("https://transportfinal-transport-service.azuremicroservices.io");
         builder.append("/routes/").append(startLocation)
@@ -189,20 +150,27 @@ public class RouteController {
         return response.getBody();
     }
 
-    @GetMapping("/combined/{startLocation}/to/{startStation}/to/{endStation}")
-    public ResponseEntity<RouteAndPublicRoute> getCombinedRoute(RestTemplate restTemplate,
-                                                      @PathVariable String startLocation,
-                                                      @PathVariable String startStation,
-                                                      @PathVariable String endStation) {
-
+    @GetMapping("/combined/{startLocation}/to/{startStation}/to/{endStation}/{limit}")
+    public ResponseEntity<RouteAndPublicRoute> getCombinedRoute(
+            RestTemplate restTemplate,
+            @PathVariable String startLocation,
+            @PathVariable String startStation,
+            @PathVariable int limit,
+            @PathVariable String endStation) {
 
         List<Route> routes = routeService.findByStartAndEndLocation(startLocation, endStation);
 
-        //List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+        List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
-        RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(routes, getPublicRoutes(restTemplate, startStation, endStation));
+        RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startStation, endStation));
         return ResponseEntity.ok(routeDetails);
     }
+
+
+
+
+
+    //it's not being used, but I also don't want to delete it
     @GetMapping("get/train/{originId}/{destId}")
     public ResponseEntity<Train> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
 
@@ -224,22 +192,4 @@ public class RouteController {
         return ResponseEntity.ok(details);
     }
 
-
-
 }
-/*
-    @GetMapping("train/{originId}/{destId}")
-    public ResponseEntity<TrainInfo.TrainResponse> getTrain(@PathVariable String originId, @PathVariable String destId, RestTemplate restTemplate) {
-        StringBuilder builder = new StringBuilder("https://api.resrobot.se/v2/trip?");
-        builder.append("originId=").append(originId)
-                .append("&destId=").append(destId)
-                .append("&accessId=")
-                .append("900be3c6-6024-4578-9c15-1824fb949211");
-        ResponseEntity<TrainInfo.TrainResponse> trainResponse = restTemplate.getForEntity(builder.toString(), TrainInfo.TrainResponse.class);
-        TrainInfo.TrainResponse details = trainResponse.getBody();
-        System.out.println(trainResponse.getBody());
-        return ResponseEntity.ok(details);
-    }
-
- */
-

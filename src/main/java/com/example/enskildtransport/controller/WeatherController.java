@@ -1,7 +1,7 @@
 package com.example.enskildtransport.controller;
 
-import com.example.enskildtransport.model.GeoCoodingDetails;
-import com.example.enskildtransport.model.Weather;
+import com.example.enskildtransport.model.weatherModel.GeoCoodingDetails;
+import com.example.enskildtransport.model.weatherModel.Weather;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,10 @@ public class WeatherController {
     String key = "f24f5e9709bc77a5de811683e7de8f19";
 
     @GetMapping("/{query}")
-    public ResponseEntity<GeoCoodingDetails> getGeoCooding(@PathVariable String query, RestTemplate restTemplate) {
+    public ResponseEntity<GeoCoodingDetails> getGeoCooding(
+            @PathVariable String query,
+            RestTemplate restTemplate) {
+
         StringBuilder builder = new StringBuilder(address);
         builder.append("q=")
                 .append(query)
@@ -35,21 +38,23 @@ public class WeatherController {
             @PathVariable String query1,
             @PathVariable String query2,
             RestTemplate restTemplate) {
+
         StringBuilder builder = new StringBuilder(address);
         builder.append("q=")
                 .append(query1)
                 .append("&appid=")
                 .append(key);
-        ResponseEntity<GeoCoodingDetails[]> response1 = restTemplate.getForEntity(builder.toString(), GeoCoodingDetails[].class);
+        ResponseEntity<GeoCoodingDetails[]> response1 =
+                restTemplate.getForEntity(builder.toString(), GeoCoodingDetails[].class);
         GeoCoodingDetails details1 = response1.getBody()[0];
 
         StringBuilder builder2 = new StringBuilder(address);
-
         builder2.append("q=")
                 .append(query2)
                 .append("&appid=")
                 .append(key);
-        ResponseEntity<GeoCoodingDetails[]> response2 = restTemplate.getForEntity(builder2.toString(), GeoCoodingDetails[].class);
+        ResponseEntity<GeoCoodingDetails[]> response2 =
+                restTemplate.getForEntity(builder2.toString(), GeoCoodingDetails[].class);
         GeoCoodingDetails details2 = response2.getBody()[0];
 
         List<GeoCoodingDetails> detailsList = new ArrayList<>();
@@ -60,7 +65,9 @@ public class WeatherController {
     }
 
     @GetMapping("get/{query}")
-    public ResponseEntity<Weather> getWeather(@PathVariable String query, RestTemplate restTemplate) {
+    public ResponseEntity<Weather> getWeather(
+            @PathVariable String query,
+            RestTemplate restTemplate) {
 
         ResponseEntity<GeoCoodingDetails> geoCoodingResponse = getGeoCooding(query, restTemplate);
         GeoCoodingDetails geoCoodingDetails = geoCoodingResponse.getBody();

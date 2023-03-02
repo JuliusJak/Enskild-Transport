@@ -1,4 +1,4 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.trainModel;
 
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 @Data
 public class Train {
 
+    //this determines what parameters show when calling on a train route
+    //it is never used because we as a group took the decision to not use it,
+    // but I don't want to delete it, so it will stay :)
     @JsonAlias("Trip")
     private TripDetails[] trip;
 
@@ -56,51 +59,3 @@ public class Train {
         }
     }
 }
-
-
-
-
-
-
-
-
-/*
-@Data
-public class Train {
-    //private TripList[] Trip;
-
-    private Origin origin;
-    private Destination destination;
-
-    @Data
-    public static class TripList {
-        private Destination destination;
-        private Origin origin;
-    }
-
-    @Data
-    public static class Origin {
-        private String name;
-        private String type;
-        private String id;
-        private String extId;
-        private double lon;
-        private double lat;
-        private int routeIdx;
-        private String prognosisType;
-        private String time;
-        private String date;
-
-
-    }
-
-    @Data
-    public static class Destination {
-        private String name;
-        private String type;
-        private String id;
-        private String extId;
-    }
-
-}
-*/

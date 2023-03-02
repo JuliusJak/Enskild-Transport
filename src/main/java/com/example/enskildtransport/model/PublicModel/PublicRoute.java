@@ -1,4 +1,4 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.PublicModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class PublicRoute {
 
+    //Choose what parameters show when calling a public route
     private long id;
     private String startLocation;
     private String endLocation;

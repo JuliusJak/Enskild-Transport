@@ -1,4 +1,4 @@
-package com.example.enskildtransport.model;
+package com.example.enskildtransport.model.trainModel;
 
 import lombok.Data;
 
@@ -7,6 +7,9 @@ import java.util.List;
 
 @Data
 public class TrainInfo {
+
+    //a combination of both legs and currency. So that I can return both in the same method
+
     private List<Leg> legs;
     private String currency;
 
