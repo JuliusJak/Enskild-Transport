@@ -29,7 +29,6 @@ public class Route {
 
     private String description = getRandomDescription();
     private int delay;
-    private int start;
     private String transportType;
     private boolean isFavorite;
     private boolean startLocationIsStation;

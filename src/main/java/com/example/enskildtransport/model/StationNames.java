@@ -30,6 +30,7 @@ public interface StationNames {
             "Boden",
             "Kiruna",
             "Skogsholm",
-            "Liseberg"
+            "Liseberg",
+            "Kungsbacka"
     );
 }

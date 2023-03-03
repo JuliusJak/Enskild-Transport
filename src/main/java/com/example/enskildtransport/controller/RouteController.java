@@ -167,9 +167,12 @@ public class RouteController {
             @PathVariable String startLocation,
             @PathVariable String startStation,
             @PathVariable int limit,
-            @PathVariable String endStation) {
+            @PathVariable String endStation) throws ExceptionHandler{
 
         List<Route> routes = routeService.findByStartAndEndLocation(startLocation, endStation);
+        if (routes.isEmpty()) {
+            throw new ExceptionHandler("No route available");
+        }
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
