@@ -43,7 +43,7 @@ public class RouteController {
     public List<Route> getRouteByStartLocation(@PathVariable String startLocation) throws ExceptionHandler{
         List<Route> routes = routeService.findByStartLocation(startLocation);
         if (routes.isEmpty()) {
-            throw new ExceptionHandler("No route available");
+            throw new ExceptionHandler("No route available. Check your spelling");
         }
         return routes;
     }
@@ -52,7 +52,7 @@ public class RouteController {
     public List<Route> getRouteByEndLocation(@PathVariable String endLocation)throws ExceptionHandler{
         List<Route> routes = routeService.findByEndLocation(endLocation);
         if (routes.isEmpty()) {
-            throw new ExceptionHandler("No route available");
+            throw new ExceptionHandler("No route available. Check your spelling");
         }
         return routes;
     }
@@ -76,7 +76,8 @@ public class RouteController {
             List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
             if (routes.isEmpty()) {
-                throw new ExceptionHandler("No route available");
+
+                throw new ExceptionHandler("No route available. Check your spelling");
             }
 
             String route = routes.toArray()[0].toString();
@@ -118,7 +119,7 @@ public class RouteController {
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
         if (routes.isEmpty()) {
-            throw new ExceptionHandler("No route available");
+            throw new ExceptionHandler("No route available. Check your spelling");
         }
 
 
@@ -171,7 +172,7 @@ public class RouteController {
 
         List<Route> routes = routeService.findByStartAndEndLocation(startLocation, endStation);
         if (routes.isEmpty()) {
-            throw new ExceptionHandler("No route available");
+            throw new ExceptionHandler("No route available. Check your spelling");
         }
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
