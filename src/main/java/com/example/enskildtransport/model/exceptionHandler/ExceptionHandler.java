@@ -1,7 +1,9 @@
 package com.example.enskildtransport.model.exceptionHandler;
 
+import org.springframework.web.bind.annotation.ControllerAdvice;
+
 public class ExceptionHandler extends RuntimeException{
-    public ExceptionHandler (Long id){
-        super("Rout not found with id" + id);
+    public ExceptionHandler (String message){
+        super(message);
     }
 }

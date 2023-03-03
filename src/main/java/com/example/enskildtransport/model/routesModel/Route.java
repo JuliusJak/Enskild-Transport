@@ -29,6 +29,7 @@ public class Route {
 
     private String description = getRandomDescription();
     private int delay;
+    private int start;
     private String transportType;
     private boolean isFavorite;
     private boolean startLocationIsStation;
@@ -43,7 +44,6 @@ public class Route {
             delay = 0;
         }
         if (isDelay){
-            System.out.println("True");
             delay = travelTime *= 0.35;
             travelTime*= 1.35;
         }

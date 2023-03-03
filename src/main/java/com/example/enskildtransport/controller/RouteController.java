@@ -1,6 +1,7 @@
 package com.example.enskildtransport.controller;
 
 import com.example.enskildtransport.model.PublicModel.PublicRoute;
+import com.example.enskildtransport.model.exceptionHandler.ExceptionHandler;
 import com.example.enskildtransport.model.routesModel.Route;
 import com.example.enskildtransport.model.routesModel.RouteAndPublicRoute;
 import com.example.enskildtransport.model.routesModel.RouteFusion;
@@ -14,9 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/routes/*")
@@ -41,14 +40,20 @@ public class RouteController {
     }
 
     @GetMapping("/Start/{startLocation}")
-    public List<Route> getRouteByStartLocation(@PathVariable String startLocation){
+    public List<Route> getRouteByStartLocation(@PathVariable String startLocation) throws ExceptionHandler{
         List<Route> routes = routeService.findByStartLocation(startLocation);
+        if (routes.isEmpty()) {
+            throw new ExceptionHandler("No route available");
+        }
         return routes;
     }
 
     @GetMapping("/End/{endLocation}")
-    public List<Route> getRouteByEndLocation(@PathVariable String endLocation){
+    public List<Route> getRouteByEndLocation(@PathVariable String endLocation)throws ExceptionHandler{
         List<Route> routes = routeService.findByEndLocation(endLocation);
+        if (routes.isEmpty()) {
+            throw new ExceptionHandler("No route available");
+        }
         return routes;
     }
 
@@ -64,28 +69,28 @@ public class RouteController {
             @PathVariable String endLocation,
             @PathVariable String transportType,
             @PathVariable int limit,
-            RestTemplate restTemplate){
+            RestTemplate restTemplate) throws ExceptionHandler {
 
-        List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
-        if (routes.isEmpty()){
-            System.out.println("Route is empty");
+            List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType, startLocation, endLocation);
+            List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
 
-        }
-        List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
+            if (routes.isEmpty()) {
+                throw new ExceptionHandler("No route available");
+            }
 
-        String route = routes.toArray()[0].toString();
-        String startIsStation = "startLocationIsStation=true";
-        String endIsStation = "endLocationIsStation=true";
+            String route = routes.toArray()[0].toString();
+            String startIsStation = "startLocationIsStation=true";
+            String endIsStation = "endLocationIsStation=true";
 
-        if (route.contains(endIsStation) || route.contains(startIsStation)) {
+            if (route.contains(endIsStation) || route.contains(startIsStation)) {
+                RouteAndPublicRoute routeFusion = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
+                return ResponseEntity.ok(routeFusion);
+            }
 
-            RouteAndPublicRoute routeFusion = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
-            return ResponseEntity.ok(routeFusion);
-        }
+            RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
+            return ResponseEntity.ok(routeDetails);
 
-        RouteAndPublicRoute routeDetails = new RouteAndPublicRoute(limitedRoutes, getPublicRoutes(restTemplate, startLocation, endLocation));
-        return ResponseEntity.ok(routeDetails);
     }
 
     @GetMapping("/weather/{startLocation}/to/{endLocation}/{transportType}/{limit}")
@@ -94,7 +99,7 @@ public class RouteController {
             @PathVariable String endLocation,
             @PathVariable String transportType,
             @PathVariable int limit,
-            RestTemplate restTemplate){
+            RestTemplate restTemplate) throws ExceptionHandler{
 
         ResponseEntity<GeoCoodingDetails> geoCoodingResponse = weatherController.getGeoCooding(endLocation, restTemplate);
         GeoCoodingDetails geoCoodingDetails = geoCoodingResponse.getBody();
@@ -112,6 +117,11 @@ public class RouteController {
 
         List<Route> routes = routeService.findRouteByTransportTypeAndStartLocationAndEndLocation(transportType,startLocation, endLocation);
 
+        if (routes.isEmpty()) {
+            throw new ExceptionHandler("No route available");
+        }
+
+
         String route = routes.toArray()[0].toString();
         String startIsStation = "startLocationIsStation=true";
         String endIsStation = "endLocationIsStation=true";
@@ -127,6 +137,7 @@ public class RouteController {
 
         List<Route> limitedRoutes = routes.subList(0, Math.min(limit, routes.size()));
         RouteFusion routeDetails = new RouteFusion(details, limitedRoutes, getPublicRoutes(restTemplate, null, null));
+
 
         return ResponseEntity.ok(routeDetails);
     }
