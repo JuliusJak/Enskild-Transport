@@ -25,28 +25,31 @@ public class Route {
     private long id;
     private String startLocation;
     private String endLocation;
-    private String description = getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase()
-            + " then " + getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase();
     private int travelTime = setTravelTime();
+
+    private String description = getRandomDescription();
     private int delay;
     private String transportType;
     private boolean isFavorite;
     private boolean startLocationIsStation;
     private boolean endLocationIsStation;
 
-    public int setTravelTime() {
+    private int setTravelTime() {
         Random rand = new Random();
         boolean isDelay = false;
-        this.travelTime = rand.nextInt(24*60) + 1;
-        if (travelTime < rand.nextInt(24*60) + 1) {
+        travelTime = rand.nextInt(24*60) + 1;
+        if (travelTime > rand.nextInt(24*60) + 1) {
             isDelay = true;
+            delay = 0;
         }
         if (isDelay){
+            System.out.println("True");
             delay = travelTime *= 0.35;
             travelTime*= 1.35;
         }
         return travelTime;
     }
+
 
     public boolean startLocationIsStation(String startLocation) {
 
@@ -61,9 +64,6 @@ public class Route {
 
     }
     public boolean endLocationIsStation(String endLocation) {
-
-
-
         if (StationNames.stationsSweden.contains(endLocation)) {
             endLocationIsStation = true;
 
@@ -84,4 +84,12 @@ public class Route {
         Random rand = new Random();
         return DirectionPlaces.directionList.get(rand.nextInt(DirectionPlaces.directionList.size()));
     }
+
+    private static String getRandomDescription() {
+
+
+        return getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase()
+                + " then " + getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase();
+    }
+
 }
