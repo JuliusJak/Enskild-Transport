@@ -1,0 +1,349 @@
+{
+	"info": {
+		"_postman_id": "535b5673-6dd5-45f7-9f7d-ac54db918f5f",
+		"name": "Api-testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25851380"
+	},
+	"item": [
+		{
+			"name": "Get weather (custom URL)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/weather/get/uppsala",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"weather",
+						"get",
+						"uppsala"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "start -> destination with train",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/get/train/stockholm/uppsala",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"get",
+						"train",
+						"stockholm",
+						"uppsala"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get many coords (2 different coord)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/weather/many/stockholm/uppsala",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"weather",
+						"many",
+						"stockholm",
+						"uppsala"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Route",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"startLocation\": \"katrineholm\",\r\n    \"endLocation\": \"Skogsholm\",\r\n    \"transportType\": \"car\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/routes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get route by vehicle type and start->end",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/katrineholm/to/Skogsholm/car/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"katrineholm",
+						"to",
+						"Skogsholm",
+						"car",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get route and get weather at dest",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/weather/katrineholm/to/Skogsholm/car/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"weather",
+						"katrineholm",
+						"to",
+						"Skogsholm",
+						"car",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all favorite routes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "save Favorite route",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/favorite/1/favorite",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"favorite",
+						"1",
+						"favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unmark favorite route",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/1/unmark-favorite",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"1",
+						"unmark-favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get favorite by transportType",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/favorites/car",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"favorites",
+						"car"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "combined route",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/combined/katrineholm/to/Kungsbacka/to/Liseberg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"combined",
+						"katrineholm",
+						"to",
+						"Kungsbacka",
+						"to",
+						"Liseberg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get public route",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/public/Kungsbacka/to/Liseberg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"public",
+						"Kungsbacka",
+						"to",
+						"Liseberg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get route from startlocation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/Start/katrineholm",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"Start",
+						"katrineholm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get be end destination",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routes/End/Skogsholm",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						"End",
+						"Skogsholm"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "lat",
+			"value": "11.9810"
+		},
+		{
+			"key": "lon",
+			"value": "57.6717"
+		},
+		{
+			"key": "Mölndal",
+			"value": "57.6717/11.981"
+		},
+		{
+			"key": "vaxjo",
+			"value": "lat=59.3251172&lon=18.0710935&appid=f24f5e9709bc77a5de811683e7de8f19"
+		},
+		{
+			"key": "Stockholm",
+			"value": "lat=59.3251172&lon=18.0710935&appid=f24f5e9709bc77a5de811683e7de8f19"
+		}
+	]
+}
