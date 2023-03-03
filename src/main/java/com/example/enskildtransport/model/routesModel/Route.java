@@ -1,5 +1,7 @@
 package com.example.enskildtransport.model.routesModel;
 
+import com.example.enskildtransport.model.DirectionDirection;
+import com.example.enskildtransport.model.DirectionPlaces;
 import com.example.enskildtransport.model.StationNames;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +25,10 @@ public class Route {
     private long id;
     private String startLocation;
     private String endLocation;
+    private String description = getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase()
+            + " then " + getRandomDirection() + ": " + getRandomImaginaryPlace().toUpperCase();
     private int travelTime = setTravelTime();
-    private boolean delay;
+    private int delay;
     private String transportType;
     private boolean isFavorite;
     private boolean startLocationIsStation;
@@ -32,11 +36,13 @@ public class Route {
 
     public int setTravelTime() {
         Random rand = new Random();
+        boolean isDelay = false;
         this.travelTime = rand.nextInt(24*60) + 1;
         if (travelTime < rand.nextInt(24*60) + 1) {
-            delay = true;
+            isDelay = true;
         }
-        if (delay){
+        if (isDelay){
+            delay = travelTime *= 0.35;
             travelTime*= 1.35;
         }
         return travelTime;
@@ -69,4 +75,13 @@ public class Route {
 
     }
 
+    private static String getRandomDirection() {
+        Random rand = new Random();
+        return DirectionDirection.directionList.get(rand.nextInt(DirectionDirection.directionList.size()));
+    }
+
+    private static String getRandomImaginaryPlace() {
+        Random rand = new Random();
+        return DirectionPlaces.directionList.get(rand.nextInt(DirectionPlaces.directionList.size()));
+    }
 }
